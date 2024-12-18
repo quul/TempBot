@@ -1,8 +1,9 @@
 import "dotenv/config";
 
-import { Bot } from "grammy";
-import { getTemperature } from "./lib";
+import { Bot, InputFile } from "grammy";
+import { getLatestTemperature, getTemperatureLastDay } from "./lib";
 import { setCommands } from "./scripts/setCommands";
+import { ChartType, generateDiagram } from "./diagram";
 
 // Create an instance of the `Bot` class and pass your bot token to it.
 export const bot = new Bot(process.env.BOT_TOKEN!); // <-- put your bot token between the ""
@@ -22,26 +23,41 @@ bot.command("ping", async (ctx) => {
 });
 
 bot.command("temperature", async (ctx) => {
-  const temperature = await getTemperature();
-
-  if (temperature) {
-    await bot.api.sendMessage(
+  const metrics = await getLatestTemperature();
+  if (metrics) {
+    const rooms = Object.keys(metrics);
+    for (const room of rooms) {
+      const temperature = metrics[room].temperature[1].toString()
+      const humidity = metrics[room].humidity[1].toString()
+      const time = (new Date(metrics[room].temperature[0] * 1000)).toLocaleString()
+      await bot.api.sendMessage(
         ctx.chat.id,
-        `Weather data now:
-        Temperature: \`${temperature["pvvx_temperature"]}\`°C
-        Humidity: \`${temperature["pvvx_humidity"]}\`%
-        Time: \`${new Date(temperature["timestamp"] * 1000).toLocaleString()}\`
+        `Weather data for ${room}:
+        Temperature: \`${temperature}\`°C
+        Humidity: \`${humidity}\`%
+        Time: \`${time}\`
         `,
         { reply_to_message_id: ctx.msg.message_id, parse_mode: "MarkdownV2" }
     )
+    }
   } else {
     await ctx.reply("No temperature data available");
   }
 });
 
-// Now that you specified how to handle messages, you can start your bot.
-// This will connect to the Telegram servers and wait for messages.
+bot.command("diagram", async (ctx) => {
+  const metrics = await getTemperatureLastDay();
+  if (!metrics) {
+    await ctx.reply("No temperature data available");
+    return;
+  }
+  const temperatureBuffer = await generateDiagram(metrics, ChartType.Temperature);
+  const humidityBuffer = await generateDiagram(metrics, ChartType.Humidity);
+  await ctx.replyWithPhoto(new InputFile(temperatureBuffer));
+  await ctx.replyWithPhoto(new InputFile(humidityBuffer));
+})
 
+// Set the commands for the bot.
 await setCommands(bot);
 // Start the bot.
 bot.start();

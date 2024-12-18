@@ -133,7 +133,8 @@ async function getRangeMetric(
 }
 
 export async function getTemperatureLastDay() {
-  const startTime = Math.floor(new Date().getTime() / 1000) - 86400;
+  const oneDayInSeconds = 24 * 60 * 60;
+  const startTime = Math.floor(new Date().getTime() / 1000) - oneDayInSeconds;
   const endTime = Math.floor(new Date().getTime() / 1000);
   const metric = await getRangeMetric(startTime, endTime);
   if (metric?.resultType === "vector") return null;

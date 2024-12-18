@@ -83,7 +83,8 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
       name: type === ChartType.Temperature ? "Temperature (°C)" : "Humidity (%)",
       nameTextStyle: { fontSize: 24, padding: [0, 0, 0, 60] },
       axisLabel: { fontSize: 20 },
-      splitLine: { lineStyle: { type: 'dashed' } }
+      splitLine: { lineStyle: { type: 'dashed' } },
+      scale: true
     },
     series,
     color: ['#ff7f50', '#87cefa', '#da70d6', '#32cd32', '#6495ed', '#ff69b4', '#ba55d3', '#cd5c5c', '#ffa500', '#40e0d0'],

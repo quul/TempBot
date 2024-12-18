@@ -8,94 +8,87 @@ export enum ChartType {
 }
 
 export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
-  const title = type === ChartType.Temperature ? "温度" : "湿度";
+  const title = type === ChartType.Temperature ? "Temperature" : "Humidity";
   const canvas = createCanvas(1920, 1080);
-  // It is required to do this since @types/echarts is not updated, ref: https://github.com/apache/echarts/issues/16976
   const chart = echarts.init(canvas as unknown as HTMLElement);
 
-  let series: {
-    name: string;
-    type: "line";
-    data: [number, number][];
-  }[] = [];
+  let series: echarts.SeriesOption[] = [];
   const rooms = Object.keys(data);
   for (const room of rooms) {
-    switch (type) {
-      case ChartType.Temperature: {
-        series.push({
-          name: `${room}`,
-          type: "line",
-          data: data[room].temperature.map((item) => [
-            item[0] * 1000,
-            typeof item[1] === "string" ? parseFloat(item[1]) : item[1],
-          ]),
-        });
-        break;
-      }
-      case ChartType.Humidity: {
-        series.push({
-          name: `${room}`,
-          type: "line",
-          data: data[room].humidity.map((item) => [
-            item[0] * 1000,
-            typeof item[1] === "string" ? parseFloat(item[1]) : item[1],
-          ]),
-        });
-        break;
-      }
-    }
+    series.push({
+      name: room,
+      type: "line",
+      smooth: true,
+      symbol: 'circle',
+      symbolSize: 8,
+      data: data[room][type].map((item) => [
+        item[0] * 1000,
+        typeof item[1] === "string" ? parseFloat(item[1]) : item[1],
+      ]),
+    });
   }
-  const options = {
+
+  const options: echarts.EChartsOption = {
+    backgroundColor: '#f4f4f4',
     title: {
       text: title,
       textStyle: {
-        fontSize: 30,
-      }
+        fontSize: 36,
+        fontWeight: 'bold',
+        color: '#333'
+      },
+      left: 'center',
+      top: 20
     },
     tooltip: {
       trigger: "axis",
-      textStyle: {
-        fontSize: 20,
+      textStyle: { fontSize: 16 },
+      axisPointer: {
+        type: 'cross',
+        label: { backgroundColor: '#6a7985' }
       }
     },
     legend: {
-      // data: ["Temperature", "Humidity"],
+      data: rooms,
+      top: 70,
+      textStyle: { fontSize: 16 }
     },
     grid: {
-      left: "3%",
-      right: "4%",
-      bottom: "3%",
-      containLabel: true,
+      left: '5%',
+      right: '5%',
+      bottom: '10%',
+      top: '15%',
+      containLabel: true
     },
     toolbox: {
+      feature: {
+        saveAsImage: { title: 'Save' }
+      },
+      right: 20,
+      top: 20
     },
     xAxis: {
       type: "time",
-      splitLine: {
-        show: false,
-      },
+      splitLine: { show: false },
       axisLabel: {
-        fontSize: 20,
-      },
+        fontSize: 16,
+        formatter: (value: number) => {
+          const date = new Date(value);
+          return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+        }
+      }
     },
-    yAxis:
-      type === ChartType.Temperature
-        ? {
-            type: "value",
-            name: "Temperature (°C)",
-            axisLabel: {
-              fontSize: 20,
-            },
-          }
-        : {
-            type: "value",
-            name: "Humidity (%)",
-            axisLabel: {
-              fontSize: 20,
-            },
-          },
+    yAxis: {
+      type: "value",
+      name: type === ChartType.Temperature ? "Temperature (°C)" : "Humidity (%)",
+      nameTextStyle: { fontSize: 18, padding: [0, 0, 0, 50] },
+      axisLabel: { fontSize: 16 },
+      splitLine: { lineStyle: { type: 'dashed' } }
+    },
     series,
-  } satisfies echarts.EChartsOption;
+    color: ['#ff7f50', '#87cefa', '#da70d6', '#32cd32', '#6495ed', '#ff69b4', '#ba55d3', '#cd5c5c', '#ffa500', '#40e0d0'],
+    animation: true
+  };
 
   chart.setOption(options);
   const buffer = canvas.toBuffer("image/png");

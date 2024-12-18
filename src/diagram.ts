@@ -20,7 +20,7 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
       type: "line",
       smooth: true,
       symbol: 'circle',
-      symbolSize: 8,
+      symbolSize: 10,
       data: data[room][type].map((item) => [
         item[0] * 1000,
         typeof item[1] === "string" ? parseFloat(item[1]) : item[1],
@@ -33,7 +33,7 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
     title: {
       text: title,
       textStyle: {
-        fontSize: 36,
+        fontSize: 48,
         fontWeight: 'bold',
         color: '#333'
       },
@@ -42,7 +42,7 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
     },
     tooltip: {
       trigger: "axis",
-      textStyle: { fontSize: 16 },
+      textStyle: { fontSize: 20 },
       axisPointer: {
         type: 'cross',
         label: { backgroundColor: '#6a7985' }
@@ -50,19 +50,19 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
     },
     legend: {
       data: rooms,
-      top: 70,
-      textStyle: { fontSize: 16 }
+      top: 100,
+      textStyle: { fontSize: 20 }
     },
     grid: {
       left: '5%',
       right: '5%',
       bottom: '10%',
-      top: '15%',
+      top: '18%',
       containLabel: true
     },
     toolbox: {
       feature: {
-        saveAsImage: { title: 'Save' }
+        // saveAsImage: { title: 'Save' }
       },
       right: 20,
       top: 20
@@ -71,7 +71,7 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
       type: "time",
       splitLine: { show: false },
       axisLabel: {
-        fontSize: 16,
+        fontSize: 20,
         formatter: (value: number) => {
           const date = new Date(value);
           return `${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
@@ -81,8 +81,8 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
     yAxis: {
       type: "value",
       name: type === ChartType.Temperature ? "Temperature (°C)" : "Humidity (%)",
-      nameTextStyle: { fontSize: 18, padding: [0, 0, 0, 50] },
-      axisLabel: { fontSize: 16 },
+      nameTextStyle: { fontSize: 24, padding: [0, 0, 0, 60] },
+      axisLabel: { fontSize: 20 },
       splitLine: { lineStyle: { type: 'dashed' } }
     },
     series,

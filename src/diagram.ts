@@ -1,6 +1,7 @@
 import * as echarts from "echarts";
 import { createCanvas } from "canvas";
 import type { MatrixResult } from "./lib";
+import { logger } from "./logger";
 
 export enum ChartType {
   Temperature = "temperature",
@@ -8,12 +9,15 @@ export enum ChartType {
 }
 
 export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
+  logger.debug('Starting diagram generation', { type });
   const title = type === ChartType.Temperature ? "Temperature" : "Humidity";
   const canvas = createCanvas(1280, 720);
   const chart = echarts.init(canvas as unknown as HTMLElement);
 
   let series: echarts.SeriesOption[] = [];
   const rooms = Object.keys(data);
+  logger.debug('Processing room data for diagram', { rooms });
+
   for (const room of rooms) {
     series.push({
       name: room,
@@ -93,5 +97,6 @@ export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
 
   chart.setOption(options);
   const buffer = canvas.toBuffer("image/png");
+  logger.debug('Diagram generation completed', { type });
   return buffer;
 };

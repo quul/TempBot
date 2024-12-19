@@ -19,10 +19,12 @@
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "@types/node": "^20.10.5",
     "canvas": "^2.11.2",
     "dotenv": "^16.4.7",
     "echarts": "^5.5.1",
-    "grammy": "^1.33.0"
+    "grammy": "^1.33.0",
+    "winston": "^3.17.0"
   },
   "packageManager": "pnpm@9.10.0+sha512.73a29afa36a0d092ece5271de5177ecbf8318d454ecd701343131b8ebc0c1a91c487da46ab77c8e596d6acf1461e3594ced4becedf8921b074fbd8653ed7051c"
 }

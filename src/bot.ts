@@ -6,8 +6,13 @@ import { setCommands } from "./scripts/setCommands";
 import { ChartType, generateDiagram } from "./diagram";
 import { logger } from "./logger";
 
+const botToken = process.env.BOT_TOKEN;
+if (!botToken) {
+    throw new Error("BOT_TOKEN is not set");
+}
+
 // Create an instance of the `Bot` class and pass your bot token to it.
-export const bot = new Bot(process.env.BOT_TOKEN!); // <-- put your bot token between the ""
+export const bot = new Bot(botToken);
 
 // You can now register listeners on your bot object `bot`.
 // grammY will call the listeners when users send messages to your bot.

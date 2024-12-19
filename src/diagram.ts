@@ -9,7 +9,7 @@ export enum ChartType {
 
 export const generateDiagram = async (data: MatrixResult, type: ChartType) => {
   const title = type === ChartType.Temperature ? "Temperature" : "Humidity";
-  const canvas = createCanvas(1920, 1080);
+  const canvas = createCanvas(1280, 720);
   const chart = echarts.init(canvas as unknown as HTMLElement);
 
   let series: echarts.SeriesOption[] = [];

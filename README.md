@@ -48,6 +48,30 @@ Run in production:
 pnpm start
 ```
 
+## Docker
+
+You can run this bot using Docker:
+
+1. Build the Docker image:
+```bash
+docker build -t tempbot .
+```
+
+2. Run the container:
+```bash
+docker run -d --env-file .env --name tempbot tempbot
+```
+
+To stop the container:
+```bash
+docker stop tempbot
+```
+
+To view logs:
+```bash
+docker logs tempbot
+```
+
 ## Project Structure
 
 - `src/` - Source code directory
